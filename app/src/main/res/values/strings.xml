@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Delivery</string>
+    
+    <string name="profile_authorize">Авторизоваться</string>
+    <string name="profile_user_content_description">Иконка профиля</string>
+    <string name="profile_order_history">История заказов</string>
+    <string name="profile_questions_and_answers">Вопросы и ответы</string>
+    <string name="profile_politics">Политика обработки перс. данных</string>
+    <string name="profile_rules">Правила пользования торговой площадки</string>
+    <string name="profile_version">Версия: 1.4.2</string>
+    <string name="profile_change_data">Изменить данные</string>
+</resources>
