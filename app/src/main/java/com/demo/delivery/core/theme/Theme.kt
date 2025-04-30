@@ -11,6 +11,17 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.demo.delivery.core.navigation.localNavHost
+
+private val DarkColorScheme = darkColorScheme(
+    primary = Color(0xFF58A9FF)
+)
+
+private val LightColorScheme = lightColorScheme(
+    primary = Color(0xFF007AFF)
+)
 
 
 private val DeliveryDarkColor = DeliveryColors(
@@ -27,14 +38,15 @@ private val DeliveryLightColor = DeliveryColors(
 fun DeliveryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
+    navController: NavHostController = rememberNavController(),
     content: @Composable () -> Unit
 ) {
 
 
     //По умолчанию используем стандартные цвета Material3
     val colorScheme = when {
-        darkTheme -> darkColorScheme()
-        else -> lightColorScheme()
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
 
     /**
@@ -46,7 +58,8 @@ fun DeliveryTheme(
      * [CompositionLocalProvider] нужен, чтобы можно было получить доступ к переменным, которые объявлены через [staticCompositionLocalOf]
      */
     CompositionLocalProvider(
-        localDeliveryColors provides deliveryColors
+        localDeliveryColors provides deliveryColors,
+        localNavHost provides navController
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

@@ -58,14 +58,8 @@ fun ProfileView(
 }
 
 
-@Preview(
-    uiMode = PREVIEW_UI_MODE_DARK,
-    device = PREVIEW_DEVICE
-)
-@Preview(
-    uiMode = PREVIEW_UI_MODE_LIGHT,
-    device = PREVIEW_DEVICE
-)
+@Preview(uiMode = PREVIEW_UI_MODE_DARK, device = PREVIEW_DEVICE)
+@Preview(uiMode = PREVIEW_UI_MODE_LIGHT, device = PREVIEW_DEVICE)
 @Composable
 fun ProfileViewPreview() = DeliveryTheme {
     ProfileView(ProfileState(

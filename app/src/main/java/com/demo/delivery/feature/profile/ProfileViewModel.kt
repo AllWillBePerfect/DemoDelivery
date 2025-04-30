@@ -12,6 +12,13 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     private val _state = MutableLiveData(ProfileState())
     val state: LiveData<ProfileState> = _state
 
+    fun setAuthorizedUser(name: String) {
+        _state.value = ProfileState(isAuthorized = true, userName = name)
+    }
+
+    fun logout() {
+        _state.value = ProfileState()
+    }
 }
 
 data class ProfileState(

@@ -1,46 +1,36 @@
-package com.demo.delivery.feature.userdata
+package com.demo.delivery.feature.codeconfirm
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.demo.delivery.R
 import com.demo.delivery.core.theme.DeliveryTheme
 import com.demo.delivery.core.theme.PREVIEW_DEVICE
 import com.demo.delivery.core.theme.PREVIEW_UI_MODE_DARK
 import com.demo.delivery.core.theme.PREVIEW_UI_MODE_LIGHT
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserDataView() {
+fun CodeConfirmView() {
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(stringResource(R.string.user_data_account_date))
-                },
-            )
-        }
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        )
+            modifier = Modifier.fillMaxSize().padding(innerPadding)
+        ) {
+            Column() {
+
+            }
+        }
     }
 }
 
 @Preview(uiMode = PREVIEW_UI_MODE_DARK, device = PREVIEW_DEVICE)
 @Preview(uiMode = PREVIEW_UI_MODE_LIGHT, device = PREVIEW_DEVICE)
 @Composable
-fun UserDataViewPreview() = DeliveryTheme {
-    UserDataView()
+fun CodeConfirmViewPreview() = DeliveryTheme {
+    CodeConfirmView()
 }

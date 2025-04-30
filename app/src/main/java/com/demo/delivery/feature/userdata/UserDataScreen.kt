@@ -7,4 +7,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun UserDataScreen(
     viewModel: UserDataViewModel = hiltViewModel()
 ) {
+
+    UserDataView()
 }

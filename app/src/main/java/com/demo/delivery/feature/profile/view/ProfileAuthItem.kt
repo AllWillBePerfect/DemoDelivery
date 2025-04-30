@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.demo.delivery.R
+import com.demo.delivery.core.navigation.AppScreens
+import com.demo.delivery.core.navigation.localNavHost
 import com.demo.delivery.core.theme.DeliveryTheme
 import com.demo.delivery.core.theme.PREVIEW_DEVICE
 import com.demo.delivery.core.theme.PREVIEW_UI_MODE_DARK
@@ -38,13 +40,16 @@ fun ProfileAuthItem(
     isAuthorized: Boolean,
     userName: String,
 ) {
+
+    val navController = localNavHost.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(color = localDeliveryColors.current.surfaceVariantLow)
-            .clickable {}
+            .clickable { navController.navigate(AppScreens.Login.route) }
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
 
@@ -70,7 +75,7 @@ fun ProfileAuthItem(
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.Center),
-                    imageVector = Icons.Filled.Person,
+                    imageVector = Icons.Outlined.Person,
                     contentDescription = stringResource(R.string.profile_user_content_description),
                     tint = Color.White
                 )

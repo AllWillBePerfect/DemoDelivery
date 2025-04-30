@@ -9,4 +9,24 @@
     <string name="profile_rules">Правила пользования торговой площадки</string>
     <string name="profile_version">Версия: 1.4.2</string>
     <string name="profile_change_data">Изменить данные</string>
+
+    <string name="user_data_account_date">Данные аккаунта</string>
+
+    <string name="login_enter_icon">Иконка входа</string>
+    <string name="login_enter_by_phone">Войти по телефону</string>
+    <string name="login_enter_by_phone_button">Войти по номеру телефона</string>
+    <string name="login_enter_to_get_bonuses">Войдите, чтобы получать бонусы</string>
+    <string name="login_enter_by_email">Войти по Email</string>
+    <string name="login_enter_by_email_lowercase">Войти по email</string>
+    <string name="login_request_sms_code">Отправить код на CMC</string>
+    <string name="login_request_email_code">Отправить код</string>
+    <string name="login_skip">Пропустить</string>
+    <string name="login_privacy_first_part">"Продолжая вы соглашаетесь c "</string>
+    <string name="login_privacy_second_part">Политикой обработки персональных данных</string>
+    <string name="login_email_example">name@example.com</string>
+    <string name="login_phone_example">+7 (___) ___-__-__</string>
+
+    <string name="code_confirm_phone_title">Код из СМС</string>
+    <string name="code_confirm_email_title">Код из письма</string>
+    <string name="code_confirm_code_sent">Отправили код на номер</string>
 </resources>
