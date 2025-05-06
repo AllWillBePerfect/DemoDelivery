@@ -8,7 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+) : ViewModel() {
 
     private val _state = MutableLiveData<LoginState>(LoginState())
     val state: LiveData<LoginState> = _state
@@ -20,38 +21,47 @@ class LoginViewModel @Inject constructor() : ViewModel() {
             is LoginAction.UpdateUserTextPhone -> {
                 setUserTextPhone(action.text)
             }
+
+            LoginAction.OnEmailButtonClick -> {}
+            LoginAction.OnPhoneButtonClick -> {}
         }
     }
 
+    /**
+     * Войти по email или по номеру телефона
+     */
     private fun switchAuthMethod() {
         _state.value?.let {
             _state.value = it.copy(byEmailEnter = !it.byEmailEnter)
         }
     }
 
+    /**
+     * Функция проверяет корректность введенного номера телефона
+     */
     private fun setUserTextPhone(text: String) {
-        val resultString = if (text.length >= 10) {
-            _state.value = _state.value?.copy(phoneButtonEnabled = true)
-            // ограничение по длине номера телефона, если оно больше 10 символов, оставляем только первые 10 символов
-            text.substring(0..9)
-        } else {
-            _state.value = _state.value?.copy(phoneButtonEnabled = false)
-            text
-        }
-        _state.value = _state.value?.copy(userTextPhone = resultString)
+        val isPhoneValid = text.length == 10
+        _state.value = _state.value?.copy(
+            phoneButtonEnabled = isPhoneValid,
+            userTextPhone = text
+        )
     }
 
+    /**
+     * Пункт 4.	Для почты корректными являются test@test.test и test.test@test.test,
+     * НЕкорректными - test.@test.test и test.test.@test.test;
+     * Функция проверяет корректность введенного email
+     */
     private fun setUserTextEmail(text: String) {
         val correctEmail = if (text.contains('@')) {
             val beforePart = text.substringBefore('@')
+            // проверка на отсутствия точки перед @
             Patterns.EMAIL_ADDRESS.matcher(text).matches() && beforePart.last() != '.'
         } else {
             Patterns.EMAIL_ADDRESS.matcher(text).matches()
 
         }
-        _state.value = _state.value?.copy(emailButtonEnabled = correctEmail)
-        _state.value = _state.value?.copy(userTextEmail = text)
-
+        _state.value = _state.value?.copy(emailButtonEnabled = correctEmail, userTextEmail = text)
     }
 }
 
@@ -64,7 +74,13 @@ data class LoginState(
 )
 
 sealed interface LoginAction {
+    //сменить режим ввода (email/телефон)
     data object SwitchAuthMethod : LoginAction
+    //изменить текст в поле ввода телефона и email
     data class UpdateUserTextPhone(val text: String) : LoginAction
     data class UpdateUserTextEmail(val text: String) : LoginAction
+
+    // нажатие на кнопку
+    data object OnEmailButtonClick : LoginAction
+    data object OnPhoneButtonClick : LoginAction
 }

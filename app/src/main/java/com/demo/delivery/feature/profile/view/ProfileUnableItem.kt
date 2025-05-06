@@ -1,17 +1,13 @@
 package com.demo.delivery.feature.profile.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +36,13 @@ fun ProfileUnableItem(
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(color = localDeliveryColors.current.surfaceVariantLow)
+
+            // Пункт 13.	На экране "Профиль" кнопки "История заказов",
+            // "Вопросы и ответы" и т.д. кликабельны, но никуда не ведут.
+            // То есть нажатие на них должно подсвечиваться;
+
+            // .clickable добавляет реакцию на нажатие.
+            .clickable {}
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
 
@@ -70,5 +73,5 @@ fun ProfileUnableItem(
 )
 @Composable
 fun ProfileUnableItemPreview() = DeliveryTheme {
-        ProfileUnableItem(stringResource(R.string.profile_order_history))
+    ProfileUnableItem(stringResource(R.string.profile_order_history))
 }

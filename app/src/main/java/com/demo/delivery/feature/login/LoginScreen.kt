@@ -7,7 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
 
     val state by viewModel.state.observeAsState(LoginState())

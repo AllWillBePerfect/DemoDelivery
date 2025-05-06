@@ -18,20 +18,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.demo.delivery.R
+import com.demo.delivery.core.navigation.CodeConfirmMethod
 import com.demo.delivery.core.theme.DeliveryTheme
 import com.demo.delivery.core.theme.PREVIEW_DEVICE
 import com.demo.delivery.core.theme.PREVIEW_UI_MODE_DARK
 import com.demo.delivery.core.theme.PREVIEW_UI_MODE_LIGHT
+import com.demo.delivery.feature.codeconfirm.formatter.CodeConfirmTextFormatter.emailFormating
+import com.demo.delivery.feature.codeconfirm.formatter.CodeConfirmTextFormatter.phoneFormating
 
 @Composable
 fun CodeConfirmHeader(
-    byEmailEnter: Boolean
+    byEmailEnter: Boolean,
+    params: CodeConfirmMethod
 ) {
 
     val titleText =
         if (byEmailEnter) stringResource(R.string.code_confirm_email_title) else stringResource(
             R.string.code_confirm_phone_title
         )
+
+    val formattedText =
+        if (byEmailEnter) emailFormating((params as CodeConfirmMethod.Email).email)
+        else phoneFormating((params as CodeConfirmMethod.Phone).phoneNumber)
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -65,7 +73,7 @@ fun CodeConfirmHeader(
 
         Text(
             modifier = Modifier,
-            text = stringResource(R.string.login_enter_to_get_bonuses),
+            text = formattedText,
             color = MaterialTheme.colorScheme.onSurface
         )
 
@@ -76,12 +84,19 @@ fun CodeConfirmHeader(
 @Preview(uiMode = PREVIEW_UI_MODE_LIGHT, device = PREVIEW_DEVICE)
 @Composable
 fun PreviewCodeConfirmHeaderEnterByEmail() = DeliveryTheme {
-    CodeConfirmHeader(byEmailEnter = true)
+    CodeConfirmHeader(
+        byEmailEnter = true,
+        params = CodeConfirmMethod.Email("")
+    )
 }
 
 @Preview(uiMode = PREVIEW_UI_MODE_DARK, device = PREVIEW_DEVICE)
 @Preview(uiMode = PREVIEW_UI_MODE_LIGHT, device = PREVIEW_DEVICE)
 @Composable
 fun PreviewCodeConfirmHeaderEnterByPhone() = DeliveryTheme {
-    CodeConfirmHeader(byEmailEnter = false)
+    CodeConfirmHeader(
+        byEmailEnter = false,
+        params = CodeConfirmMethod.Email("")
+    )
 }
+

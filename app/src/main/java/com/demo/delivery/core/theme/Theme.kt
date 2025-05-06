@@ -34,29 +34,34 @@ private val DeliveryLightColor = DeliveryColors(
     surfaceVariantHigh = Color(0x993C3C43)
 )
 
+/**
+ * Пункт 1.	Темная тема меняется в зависимости от настроек темы на устройстве;
+ *
+ * AndroidStudio при создании проекта на Compose сразу создает поддержку светлой и темной темы.
+ *
+ * @param darkTheme находится ли система в темной теме.
+ * @param navController контроллер навигации. Он находится внутри `DeliveryTheme` чтобы при передаче в
+ * `Preview` функции не было ошибок.
+ * @param content дальнейшие `Compose` функции
+ *
+ */
 @Composable
 fun DeliveryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
     navController: NavHostController = rememberNavController(),
     content: @Composable () -> Unit
 ) {
 
 
-    //По умолчанию используем стандартные цвета Material3
     val colorScheme = when {
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 
-    /**
-     * Если будет нужен иной цвет, то воспользуемся [localDeliveryColors]
-     */
+    // Если нужен цвет, которого нет в стандартной теме
     val deliveryColors = if (darkTheme) DeliveryDarkColor else DeliveryLightColor
 
-    /**
-     * [CompositionLocalProvider] нужен, чтобы можно было получить доступ к переменным, которые объявлены через [staticCompositionLocalOf]
-     */
+    // С помощью CompositionLocalProvider объявим переменные, которые сможем получать их любой Compose функции
     CompositionLocalProvider(
         localDeliveryColors provides deliveryColors,
         localNavHost provides navController

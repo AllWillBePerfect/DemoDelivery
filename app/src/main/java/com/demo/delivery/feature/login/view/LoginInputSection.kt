@@ -1,6 +1,5 @@
 package com.demo.delivery.feature.login.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
@@ -37,12 +36,14 @@ fun LoginInputSection(
         else
             stringResource(R.string.login_enter_by_email)
 
-    val numericRegex = Regex("[^0-9]")
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        //Пункт3.	На полях ввода номера и почты обязательно должно быть форматирование
+        // и проверка корректного набора;
 
         if (byEmailEnter) {
             TextField(
@@ -65,16 +66,13 @@ fun LoginInputSection(
                     imeAction = ImeAction.Done
                 ),
                 placeholder = { Text(text = stringResource(R.string.login_phone_example)) },
+                //Итоговый ввод номера пользователя форматируется только для этого воля с помощью NanpVisualTransformation
                 visualTransformation = NanpVisualTransformation(),
                 singleLine = true,
                 onValueChange = {
-                    val stripped = numericRegex.replace(it, "")
-                    val text = if (stripped.length >= 10) {
-                        stripped.substring(0..9)
-                    } else {
-                        stripped
-                    }
-                    onAction(LoginAction.UpdateUserTextPhone(text))
+                    // Ограничение на 10 символов в поле
+                    if (it.length <= 10)
+                        onAction(LoginAction.UpdateUserTextPhone(it))
                 }
             )
         }
@@ -85,7 +83,6 @@ fun LoginInputSection(
 
     }
 }
-
 
 
 @Preview(uiMode = PREVIEW_UI_MODE_DARK, device = PREVIEW_DEVICE)

@@ -14,6 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.demo.delivery.R
+import com.demo.delivery.core.navigation.AppScreens
+import com.demo.delivery.core.navigation.localNavHost
 import com.demo.delivery.core.theme.DeliveryTheme
 import com.demo.delivery.core.theme.PREVIEW_DEVICE
 import com.demo.delivery.core.theme.PREVIEW_UI_MODE_DARK
@@ -23,8 +25,12 @@ import com.demo.delivery.core.theme.PREVIEW_UI_MODE_LIGHT
 fun LoginButtonSection(
     byEmailEnter: Boolean,
     emailButtonEnabled: Boolean,
-    phoneButtonEnabled: Boolean
+    phoneButtonEnabled: Boolean,
+    email: String,
+    phone: String,
 ) {
+
+    val navController = localNavHost.current
 
     val buttonText =
         if (byEmailEnter)
@@ -32,7 +38,8 @@ fun LoginButtonSection(
         else
             stringResource(R.string.login_request_sms_code)
 
-    val buttonEnabledState = byEmailEnter && emailButtonEnabled || !byEmailEnter && phoneButtonEnabled
+    val buttonEnabledState =
+        byEmailEnter && emailButtonEnabled || !byEmailEnter && phoneButtonEnabled
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -41,7 +48,18 @@ fun LoginButtonSection(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
-            onClick = {},
+            onClick = {
+                // Пункт 5.	После ввода корректного телефона/почты и нажатия на "Отправить код"
+                // происходит переход на экран ввода кода;
+                if (byEmailEnter) {
+                    //если вход по почте, то отправляем аргументы для почты
+                    navController.navigate(AppScreens.CodeConfirm.route + "/email" + "/$email")
+                } else {
+                    //если вход по телефону, то отправляем аргументы для телефона
+                    navController.navigate(AppScreens.CodeConfirm.route + "/phone" + "/$phone")
+
+                }
+            },
             enabled = buttonEnabledState
         ) {
             Text(
@@ -50,8 +68,12 @@ fun LoginButtonSection(
             )
         }
 
-        TextButton(onClick = {}) {
-            Text(stringResource(R.string.login_skip))
+        TextButton(onClick = {
+            navController.navigate(AppScreens.Profile.route) {
+                popUpTo(AppScreens.Login.route) { inclusive = true }
+            }
+        }) {
+            Text(text = stringResource(R.string.login_skip))
         }
     }
 }
@@ -63,7 +85,9 @@ fun LoginButtonSectionPreviewEnterByPhoneAndEnabled() = DeliveryTheme {
     LoginButtonSection(
         byEmailEnter = false,
         phoneButtonEnabled = true,
-        emailButtonEnabled = false
+        emailButtonEnabled = false,
+        email = "",
+        phone = ""
     )
 }
 
@@ -74,7 +98,9 @@ fun LoginButtonSectionPreviewEnterByEmailAndEnabled() = DeliveryTheme {
     LoginButtonSection(
         byEmailEnter = true,
         phoneButtonEnabled = false,
-        emailButtonEnabled = true
+        emailButtonEnabled = true,
+        email = "",
+        phone = ""
     )
 }
 
@@ -85,7 +111,9 @@ fun LoginButtonSectionPreviewEnterByPhoneAndDisabled() = DeliveryTheme {
     LoginButtonSection(
         byEmailEnter = false,
         phoneButtonEnabled = false,
-        emailButtonEnabled = false
+        emailButtonEnabled = false,
+        email = "",
+        phone = ""
     )
 }
 
@@ -96,7 +124,9 @@ fun LoginButtonSectionPreviewEnterByEmailAndDisabled() = DeliveryTheme {
     LoginButtonSection(
         byEmailEnter = true,
         phoneButtonEnabled = false,
-        emailButtonEnabled = false
+        emailButtonEnabled = false,
+        email = "",
+        phone = ""
     )
 }
 

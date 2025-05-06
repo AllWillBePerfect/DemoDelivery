@@ -56,7 +56,9 @@ fun LoginView(
                 LoginButtonSection(
                     byEmailEnter = state.byEmailEnter,
                     emailButtonEnabled = state.emailButtonEnabled,
-                    phoneButtonEnabled = state.phoneButtonEnabled
+                    phoneButtonEnabled = state.phoneButtonEnabled,
+                    email = state.userTextEmail,
+                    phone = state.userTextPhone
                 )
 
                 Spacer(Modifier.height(24.dp))

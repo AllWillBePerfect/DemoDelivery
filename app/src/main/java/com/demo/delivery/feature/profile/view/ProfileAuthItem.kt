@@ -49,7 +49,25 @@ fun ProfileAuthItem(
             .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(color = localDeliveryColors.current.surfaceVariantLow)
-            .clickable { navController.navigate(AppScreens.Login.route) }
+            .clickable {
+
+
+
+                if (isAuthorized) {
+                    // Пункт 10.	По нажатию на кнопку с "Имя" и "Изменить данные"(то есть, когда пользователь зарегистрировался),
+                    // происходит переход на экран "Данные аккаунта", где уже есть добавленный почта или номер;
+
+                    navController.navigate(AppScreens.UserData.route)
+                } else {
+                    // Пункт 2.	При нажатии на кнопку "Авторизоваться" должен происходить переход на экраны входа
+                    // по номеру телефона или почты;
+
+                    navController.navigate(AppScreens.Login.route) {
+                        popUpTo(AppScreens.Profile.route) { inclusive = true }
+                    }
+                }
+
+            }
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
 
@@ -63,10 +81,13 @@ fun ProfileAuthItem(
                 .size(44.dp)
         ) {
             if (isAuthorized) {
+                //Пункт 9.	Если код совпал с 1234, то происходит сохранение введенного номера/почты и происходит переход на стартовый экран "Профиль",
+                // только кнопка "Авторизоваться" меняет текст на "Имя" и "Изменить данные", как на макетах;
                 Text(
                     modifier = Modifier
                         .align(Alignment.Center),
-                    text = userName.first().toString(),
+                    // если пользователь ввел пустое имя, то отображаем И
+                    text = userName.firstOrNull()?.toString() ?: "И",
                     fontSize = 24.sp,
                     color = Color.White
                 )
@@ -88,7 +109,12 @@ fun ProfileAuthItem(
             if (isAuthorized) {
 
                 Text(
-                    text = userName,
+                    //Пункт 12.	Если поле имя изменено на любой кроме пустого,
+                    // на кнопке "Авторизоваться" начального экрана "Профиль" вместо текста "Имя"
+                    // отображать введенное имя;
+
+                    // если пользователь ввел пустое имя, то отображаем Имя
+                    text = if (userName.isEmpty()) "Имя" else userName,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 14.sp
                 )
@@ -128,7 +154,7 @@ fun ProfileAuthItemPreviewNotAuthorized() = DeliveryTheme {
 fun ProfileAuthItemPreviewAuthorized() = DeliveryTheme {
     ProfileAuthItem(
         isAuthorized = true,
-        userName = "Имя"
+        userName = ""
     )
 }
 

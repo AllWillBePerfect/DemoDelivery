@@ -65,12 +65,14 @@ dependencies {
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
 
-    // Позволит использовать hiltViewModel
+    //Позволит использовать hiltViewModel
     implementation(libs.androidx.hilt.navigation.compose)
 
     //Позволит преобразовывать LiveData в State
-    implementation("androidx.compose.runtime:runtime-livedata:1.8.0")
+    implementation(libs.androidx.runtime.livedata)
 
+    // DataStore для хранения настроек и данных пользователя
+    implementation(libs.androidx.datastore.preferences)
 
     // Навигация между экранами
     implementation(libs.androidx.navigation.compose)
