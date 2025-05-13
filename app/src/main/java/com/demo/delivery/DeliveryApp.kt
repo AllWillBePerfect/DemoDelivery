@@ -1,7 +1,6 @@
 package com.demo.delivery
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -9,14 +8,15 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.demo.delivery.refactoring.ui.navigation.AppScreens
-import com.demo.delivery.refactoring.ui.navigation.CodeConfirmMethod
-import com.demo.delivery.refactoring.ui.navigation.localNavHost
-import com.demo.delivery.refactoring.ui.theme.DeliveryTheme
-import com.demo.delivery.refactoring.ui.screens.CodeConfirmScreen
-import com.demo.delivery.refactoring.ui.screens.LoginScreen
-import com.demo.delivery.refactoring.ui.screens.ProfileScreen
-import com.demo.delivery.refactoring.ui.screens.UserDataScreen
+import com.demo.delivery.ui.navigation.AppScreens
+import com.demo.delivery.ui.navigation.localNavHost
+import com.demo.delivery.ui.screens.codeconfirm.CodeConfirmEmailScreen
+import com.demo.delivery.ui.screens.codeconfirm.CodeConfirmPhoneScreen
+import com.demo.delivery.ui.screens.login.LoginScreen
+import com.demo.delivery.ui.screens.profile.ProfileScreen
+import com.demo.delivery.ui.screens.userdata.UserDataScreen
+import com.demo.delivery.ui.theme.DeliveryTheme
+import com.demo.delivery.viewmodels.MainViewModel
 
 /**
  * Функция применяет `DeliveryTheme` к приложению и вызывает
@@ -31,27 +31,16 @@ fun DeliveryApp(
 
 /**
  * Навигация на основе компонента `NavHost`.
- * @param navigationViewModel экземпляр [NavigationViewModel] для получения состояния авторизации
+ * @param mainViewModel экземпляр [MainViewModel] для получения состояния авторизации
  * и обработки навигации с аргументами
  *
  */
 @Composable
 fun NavigationCompose(
-    navigationViewModel: NavigationViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val navController = localNavHost.current
-    val isLoggedIn by navigationViewModel.isLoggedIn.observeAsState()
-    val navigationRoute by navigationViewModel.navigateEffect.observeAsState()
-
-    LaunchedEffect(navigationRoute) {
-
-        navigationRoute?.let { route ->
-
-            route.singleValue()?.let {
-                navController.navigate(it)
-            }
-        }
-    }
+    val isLoggedIn by mainViewModel.isLoggedIn.observeAsState()
 
 
     isLoggedIn?.let {
@@ -74,25 +63,25 @@ fun NavigationCompose(
             ) { LoginScreen() }
 
             composable(
-                route = AppScreens.CodeConfirm.route + "/{method}" + "/{value}",
+                route = AppScreens.CodeConfirmEmail.route,
                 arguments = listOf(
-                    navArgument("method") { type = NavType.StringType },
-                    navArgument("value") { type = NavType.StringType }
+                    navArgument("email") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
-
-                val method = backStackEntry.arguments?.getString("method") ?: ""
-                val value = backStackEntry.arguments?.getString("value") ?: ""
-                val params = if (method == "email")
-                    CodeConfirmMethod.Email(value)
-                else
-                    CodeConfirmMethod.Phone(value)
-
-
-                CodeConfirmScreen(
-                    params = params
-                )
+                val email = backStackEntry.arguments?.getString("email") ?: ""
+                CodeConfirmEmailScreen(email = email)
             }
+
+            composable(
+                route = AppScreens.CodeConfirmPhone.route,
+                arguments = listOf(
+                    navArgument("phone") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val phone = backStackEntry.arguments?.getString("phone") ?: ""
+                CodeConfirmPhoneScreen(phone = phone)
+            }
+
         }
     }
 
