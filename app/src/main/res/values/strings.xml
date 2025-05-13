@@ -9,6 +9,7 @@
     <string name="profile_rules">Правила пользования торговой площадки</string>
     <string name="profile_version">Версия: 1.4.2</string>
     <string name="profile_change_data">Изменить данные</string>
+    <string name="profile_navigation_icon">Иконка навигации</string>
 
     <string name="login_enter_icon">Иконка входа</string>
     <string name="login_enter_by_phone">Войти по телефону</string>
@@ -58,7 +59,6 @@
     <string name="user_data_dialog_button_delete">Да, удалить</string>
     <string name="user_data_dialog_button_exit">Да, выйти</string>
     <string name="user_date_icon_calendar">Открыть календарь</string>
-
 
 
 </resources>
