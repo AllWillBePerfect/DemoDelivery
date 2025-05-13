@@ -9,14 +9,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.demo.delivery.core.navigation.AppScreens
-import com.demo.delivery.core.navigation.CodeConfirmMethod
-import com.demo.delivery.core.navigation.localNavHost
-import com.demo.delivery.core.theme.DeliveryTheme
-import com.demo.delivery.feature.codeconfirm.CodeConfirmScreen
-import com.demo.delivery.feature.login.LoginScreen
-import com.demo.delivery.feature.profile.ProfileScreen
-import com.demo.delivery.feature.userdata.UserDataScreen
+import com.demo.delivery.refactoring.ui.navigation.AppScreens
+import com.demo.delivery.refactoring.ui.navigation.CodeConfirmMethod
+import com.demo.delivery.refactoring.ui.navigation.localNavHost
+import com.demo.delivery.refactoring.ui.theme.DeliveryTheme
+import com.demo.delivery.refactoring.ui.screens.CodeConfirmScreen
+import com.demo.delivery.refactoring.ui.screens.LoginScreen
+import com.demo.delivery.refactoring.ui.screens.ProfileScreen
+import com.demo.delivery.refactoring.ui.screens.UserDataScreen
 
 /**
  * Функция применяет `DeliveryTheme` к приложению и вызывает

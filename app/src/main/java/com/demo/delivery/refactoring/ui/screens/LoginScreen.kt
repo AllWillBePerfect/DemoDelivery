@@ -1,4 +1,4 @@
-package com.demo.delivery.feature.login
+package com.demo.delivery.refactoring.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,26 +8,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.demo.delivery.refactoring.ui.theme.DeliveryTheme
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_DEVICE
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_UI_MODE_DARK
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_UI_MODE_LIGHT
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.demo.delivery.refactoring.components.login.LoginButtonSection
 import com.demo.delivery.refactoring.components.login.LoginHeader
 import com.demo.delivery.refactoring.components.login.LoginInputSection
 import com.demo.delivery.refactoring.components.login.LoginPrivacySection
-import com.demo.delivery.refactoring.viewmodels.LoginAction
 import com.demo.delivery.refactoring.viewmodels.LoginState
+import com.demo.delivery.refactoring.viewmodels.LoginViewModel
 
 @Composable
-fun LoginView(
-    state: LoginState,
-    onAction: (LoginAction) -> Unit
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
+
+    val state by viewModel.state.observeAsState(LoginState())
+
     Scaffold { innerPadding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(innerPadding)
@@ -47,7 +47,7 @@ fun LoginView(
                     byEmailEnter = state.byEmailEnter,
                     userTextEmail = state.userTextEmail,
                     userTextPhone = state.userTextPhone,
-                    onAction = onAction
+                    onAction = viewModel::dispatchAction
                 )
             }
 
@@ -69,11 +69,4 @@ fun LoginView(
             }
         }
     }
-}
-
-@Preview(uiMode = PREVIEW_UI_MODE_DARK, device = PREVIEW_DEVICE)
-@Preview(uiMode = PREVIEW_UI_MODE_LIGHT, device = PREVIEW_DEVICE)
-@Composable
-fun LoginViewPreview() = DeliveryTheme {
-    LoginView(LoginState()) {}
 }

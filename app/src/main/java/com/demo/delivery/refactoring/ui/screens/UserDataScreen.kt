@@ -1,4 +1,4 @@
-package com.demo.delivery.feature.userdata
+package com.demo.delivery.refactoring.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -12,30 +12,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Create
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.demo.delivery.R
+import com.demo.delivery.refactoring.ui.navigation.AppScreens
+import com.demo.delivery.refactoring.ui.navigation.CodeConfirmMethod
 import com.demo.delivery.refactoring.ui.navigation.localNavHost
-import com.demo.delivery.refactoring.ui.theme.DeliveryTheme
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_DEVICE
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_UI_MODE_DARK
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_UI_MODE_LIGHT
+import com.demo.delivery.feature.userdata.DatePickerModal
+import com.demo.delivery.feature.userdata.parseLongToDate
 import com.demo.delivery.refactoring.components.userdata.UserDataAlertDialog
 import com.demo.delivery.refactoring.components.userdata.UserDataButtonsSection
 import com.demo.delivery.refactoring.components.userdata.UserDataInputField
@@ -45,16 +44,19 @@ import com.demo.delivery.refactoring.components.userdata.UserDataInputFieldPhone
 import com.demo.delivery.refactoring.components.userdata.UserDataInputFieldShort
 import com.demo.delivery.refactoring.viewmodels.UserDataAction
 import com.demo.delivery.refactoring.viewmodels.UserDataState
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.demo.delivery.refactoring.viewmodels.UserDataViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserDataView(
-    state: UserDataState,
-    onAction: (UserDataAction) -> Unit
+fun UserDataScreen(
+    viewModel: UserDataViewModel = hiltViewModel()
 ) {
+
+
+    val state by viewModel.state.observeAsState(UserDataState())
+    val closeScreenEffect by viewModel.closeScreenEffect.observeAsState()
+    val navigateToCodeConfirmEffect by viewModel.navigateToCodeConfirmEffect.observeAsState()
+
     val navController = localNavHost.current
 
     val isChangeMode = state.isChangeMode
@@ -75,7 +77,7 @@ fun UserDataView(
                 },
                 actions = {
                     if (!isChangeMode) {
-                        IconButton(onClick = { onAction(UserDataAction.SwitchToChangeMode) }) {
+                        IconButton(onClick = { viewModel.dispatchAction(UserDataAction.SwitchToChangeMode) }) {
                             Icon(
                                 imageVector = Icons.Outlined.Create,
                                 contentDescription = stringResource(R.string.user_data_change)
@@ -104,7 +106,7 @@ fun UserDataView(
                     value = state.userTextPhone,
                     isEnabled = state.phoneTextInputEnabled,
                     errorText = state.userTextPhoneError,
-                    onValueChange = { onAction(UserDataAction.UpdateUserTextPhone(it)) }
+                    onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextPhone(it)) }
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -114,7 +116,7 @@ fun UserDataView(
                     value = state.userTextEmail,
                     isEnabled = state.emailTextInputEnabled,
                     errorText = state.userTextEmailError,
-                    onValueChange = { onAction(UserDataAction.UpdateUserTextEmail(it)) }
+                    onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextEmail(it)) }
 
                 )
 
@@ -124,7 +126,7 @@ fun UserDataView(
                     label = stringResource(R.string.user_data_label_name),
                     value = state.userTextName,
                     isEnabled = isChangeMode,
-                    onValueChange = { onAction(UserDataAction.UpdateUserTextName(it)) }
+                    onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextName(it)) }
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -142,8 +144,8 @@ fun UserDataView(
                     value = state.userTextBirthday,
                     isEnabled = isChangeMode,
                     errorText = state.userTextBirthdayError,
-                    onValueChange = { onAction(UserDataAction.UpdateUserTextBirthday(it)) },
-                    launchDatePicker = { onAction(UserDataAction.LaunchDataPicker) }
+                    onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextBirthday(it)) },
+                    launchDatePicker = { viewModel.dispatchAction(UserDataAction.LaunchDataPicker) }
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -162,7 +164,7 @@ fun UserDataView(
                     label = stringResource(R.string.user_data_label_address),
                     value = state.userTextAddress,
                     isEnabled = isChangeMode,
-                    onValueChange = { onAction(UserDataAction.UpdateUserTextAddress(it)) }
+                    onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextAddress(it)) }
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -176,7 +178,7 @@ fun UserDataView(
                         value = state.userTextApartment,
                         modifier = Modifier.weight(1f),
                         isEnabled = isChangeMode,
-                        onValueChange = { onAction(UserDataAction.UpdateUserTextApartment(it)) }
+                        onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextApartment(it)) }
 
                     )
 
@@ -185,7 +187,7 @@ fun UserDataView(
                         value = state.userTextEntrance,
                         modifier = Modifier.weight(1f),
                         isEnabled = isChangeMode,
-                        onValueChange = { onAction(UserDataAction.UpdateUserTextEntrance(it)) }
+                        onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextEntrance(it)) }
 
                     )
 
@@ -194,7 +196,7 @@ fun UserDataView(
                         value = state.userTextFloor,
                         modifier = Modifier.weight(1f),
                         isEnabled = isChangeMode,
-                        onValueChange = { onAction(UserDataAction.UpdateUserTextFloor(it)) }
+                        onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextFloor(it)) }
 
                     )
 
@@ -203,7 +205,7 @@ fun UserDataView(
                         value = state.userTextIntercom,
                         modifier = Modifier.weight(1f),
                         isEnabled = isChangeMode,
-                        onValueChange = { onAction(UserDataAction.UpdateUserTextIntercom(it)) }
+                        onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextIntercom(it)) }
 
                     )
 
@@ -221,7 +223,7 @@ fun UserDataView(
                 UserDataButtonsSection(
                     isChangeMode = state.isChangeMode,
                     buttonEnabled = state.isSaveChanges,
-                    onAction = onAction
+                    onAction = viewModel::dispatchAction
                 )
             }
 
@@ -231,81 +233,48 @@ fun UserDataView(
         if (state.isDeleteDialogVisible) {
             UserDataAlertDialog(
                 isDelete = true,
-                onDismiss = { onAction(UserDataAction.CloseDialog) },
-                onConfirm = { onAction(UserDataAction.ConfirmDeleteDialog) }
+                onDismiss = { viewModel.dispatchAction(UserDataAction.CloseDialog) },
+                onConfirm = { viewModel.dispatchAction(UserDataAction.ConfirmDeleteDialog) }
             )
         }
 
         if (state.isExitDialogVisible) {
             UserDataAlertDialog(
                 isDelete = false,
-                onDismiss = { onAction(UserDataAction.CloseDialog) },
-                onConfirm = { onAction(UserDataAction.ConfirmExitDialog) }
+                onDismiss = { viewModel.dispatchAction(UserDataAction.CloseDialog) },
+                onConfirm = { viewModel.dispatchAction(UserDataAction.ConfirmExitDialog) }
             )
         }
 
         if (state.isDatePickerVisible) {
             DatePickerModal({ date ->
                 date?.let {
-                    onAction(UserDataAction.ChooseDate(it))
+                    viewModel.dispatchAction(UserDataAction.ChooseDate(it))
                     Log.d("UserDataView", "it: ${parseLongToDate(it)}")
                 }
             }, {
-                onAction(UserDataAction.CloseDataPicker)
+                viewModel.dispatchAction(UserDataAction.CloseDataPicker)
             })
         }
 
     }
-}
 
-@Preview(uiMode = PREVIEW_UI_MODE_DARK, device = PREVIEW_DEVICE)
-@Preview(uiMode = PREVIEW_UI_MODE_LIGHT, device = PREVIEW_DEVICE)
-@Composable
-fun UserDataViewPreview() = DeliveryTheme {
-    UserDataView(
-        state = UserDataState(),
-        onAction = {}
-    )
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerModal(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState()
-
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
-                onDismiss()
-            }) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
+    LaunchedEffect(closeScreenEffect) {
+        closeScreenEffect?.singleValue()?.let {
+            navController.navigateUp()
         }
-    ) {
-        DatePicker(state = datePickerState)
     }
-}
 
-
-fun parseLongToDate(dateInMillis: Long?): String {
-    return if (dateInMillis != null) {
-        // Создаем объект Date из миллисекунд
-        val date = Date(dateInMillis)
-
-        // Форматируем дату в строку
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        dateFormat.format(date)
-    } else {
-        "Invalid date"
+    LaunchedEffect(navigateToCodeConfirmEffect) {
+        navigateToCodeConfirmEffect?.singleValue()?.let {
+            val argRoute = when (it) {
+                is CodeConfirmMethod.Email -> "/email" + "/${it.email}"
+                is CodeConfirmMethod.Phone -> "/phone" + "/${it.phoneNumber}"
+            }
+            navController.navigate(AppScreens.CodeConfirm.route + argRoute)
+        }
     }
+
+
 }

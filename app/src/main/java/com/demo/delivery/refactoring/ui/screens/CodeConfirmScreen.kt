@@ -1,4 +1,4 @@
-package com.demo.delivery.feature.codeconfirm
+package com.demo.delivery.refactoring.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,28 +8,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.demo.delivery.refactoring.ui.navigation.AppScreens
 import com.demo.delivery.refactoring.ui.navigation.CodeConfirmMethod
-import com.demo.delivery.refactoring.ui.theme.DeliveryTheme
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_DEVICE
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_UI_MODE_DARK
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_UI_MODE_LIGHT
+import com.demo.delivery.refactoring.ui.navigation.localNavHost
 import com.demo.delivery.refactoring.components.codeconfirm.CodeConfirmBottomSection
 import com.demo.delivery.refactoring.components.codeconfirm.CodeConfirmButtonSection
 import com.demo.delivery.refactoring.components.codeconfirm.CodeConfirmHeader
 import com.demo.delivery.refactoring.components.codeconfirm.CodeConfirmOtpSectionV3
-import com.demo.delivery.refactoring.viewmodels.CodeConfirmAction
 import com.demo.delivery.refactoring.viewmodels.CodeConfirmState
+import com.demo.delivery.refactoring.viewmodels.CodeConfirmViewModel
 
 @Composable
-fun CodeConfirmView(
-    state: CodeConfirmState,
-    onAction: (CodeConfirmAction) -> Unit,
+fun CodeConfirmScreen(
+    viewModel: CodeConfirmViewModel = hiltViewModel(),
     params: CodeConfirmMethod
 ) {
+
+    val state by viewModel.state.observeAsState(CodeConfirmState())
+    val navigateToProfileEffect by viewModel.navigateToProfileEffect.observeAsState()
+
+    val navController = localNavHost.current
 
     val byEmailEnter = params is CodeConfirmMethod.Email
 
@@ -57,7 +62,7 @@ fun CodeConfirmView(
                     timerValue = state.timerValue,
                     isError = state.isError,
                     buttonEnabled = state.buttonEnabled,
-                    onAction = onAction
+                    onAction = viewModel::dispatchAction
                 )
 
 
@@ -73,7 +78,7 @@ fun CodeConfirmView(
                     buttonEnabled = state.buttonEnabled,
                     byEmailEnter = byEmailEnter,
                     params = params,
-                    onAction = onAction
+                    onAction = viewModel::dispatchAction
                 )
 
                 Spacer(Modifier.height(24.dp))
@@ -84,18 +89,13 @@ fun CodeConfirmView(
             }
         }
     }
-}
 
-@Preview(uiMode = PREVIEW_UI_MODE_DARK, device = PREVIEW_DEVICE)
-@Preview(uiMode = PREVIEW_UI_MODE_LIGHT, device = PREVIEW_DEVICE)
-@Composable
-fun CodeConfirmViewPreview() = DeliveryTheme {
-    CodeConfirmView(
-        state = CodeConfirmState(),
-        onAction = {},
-        params = CodeConfirmMethod.Email(
-            ""
-        )
-    )
-}
+    LaunchedEffect(navigateToProfileEffect) {
+        navigateToProfileEffect?.singleValue()?.let {
+            navController.navigate(AppScreens.Profile.route) {
+                popUpTo(AppScreens.Profile.route) {inclusive = true}
+            }
+        }
+    }
 
+}

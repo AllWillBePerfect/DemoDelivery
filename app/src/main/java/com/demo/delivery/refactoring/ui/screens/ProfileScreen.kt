@@ -1,4 +1,4 @@
-package com.demo.delivery.feature.profile
+package com.demo.delivery.refactoring.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,24 +8,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.demo.delivery.R
-import com.demo.delivery.refactoring.ui.theme.DeliveryTheme
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_DEVICE
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_UI_MODE_DARK
-import com.demo.delivery.refactoring.ui.theme.PREVIEW_UI_MODE_LIGHT
 import com.demo.delivery.refactoring.components.profile.ProfileAuthItem
 import com.demo.delivery.refactoring.components.profile.ProfileUnableItem
 import com.demo.delivery.refactoring.viewmodels.ProfileState
+import com.demo.delivery.refactoring.viewmodels.ProfileViewModel
 
 @Composable
-fun ProfileView(
-    state: ProfileState
+fun ProfileScreen(
+    viewModel: ProfileViewModel = hiltViewModel(),
 ) {
+    val state by viewModel.state.observeAsState(ProfileState())
 
     Scaffold { innerPadding ->
         Box(
@@ -56,16 +56,4 @@ fun ProfileView(
             }
         }
     }
-
-}
-
-
-@Preview(uiMode = PREVIEW_UI_MODE_DARK, device = PREVIEW_DEVICE)
-@Preview(uiMode = PREVIEW_UI_MODE_LIGHT, device = PREVIEW_DEVICE)
-@Composable
-fun ProfileViewPreview() = DeliveryTheme {
-    ProfileView(
-        ProfileState(
-        )
-    )
 }
