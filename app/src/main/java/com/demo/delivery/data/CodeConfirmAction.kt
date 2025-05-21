@@ -1,4 +1,4 @@
-package com.demo.delivery.ui.screens.codeconfirm.models
+package com.demo.delivery.data
 
 sealed interface CodeConfirmAction {
     // ввели 4-значный код

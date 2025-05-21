@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.demo.delivery.ui.screens.codeconfirm.models.CodeConfirmAction
+import com.demo.delivery.data.CodeConfirmAction
 
 @Composable
 fun CodeConfirmOtpSection(

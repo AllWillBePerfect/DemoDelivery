@@ -1,6 +1,7 @@
 package com.demo.delivery
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,8 +41,7 @@ fun NavigationCompose(
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val navController = localNavHost.current
-    val isLoggedIn by mainViewModel.isLoggedIn.observeAsState()
-
+    val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
 
     isLoggedIn?.let {
         val startDestination =

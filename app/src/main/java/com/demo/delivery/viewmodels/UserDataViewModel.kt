@@ -1,14 +1,14 @@
 package com.demo.delivery.viewmodels
 
-import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.demo.delivery.data.UserDataAction
+import com.demo.delivery.data.UserDataState
 import com.demo.delivery.ui.navigation.CodeConfirmMethod
-import com.demo.delivery.ui.screens.userdata.models.UserDataAction
-import com.demo.delivery.ui.screens.userdata.models.UserDataState
 import com.demo.delivery.utils.Event
+import com.demo.delivery.utils.TextValidationUtils
 import com.demo.delivery.utils.UserPreferencesUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +22,8 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-/**
- * Пункт 11.	На экране "Данные аккаунта" можно добавить
+
+/* * Пункт 11.	На экране "Данные аккаунта" можно добавить
  * a.	Имя пользователя (любое, даже пустое),
  * b.	почту(если регистрация была по номеру) или номер(если регистрация была по почте),
  * c.	дату рождения, которую тоже нужно форматировать(задача со звездочкой*: проверка корректного набора: пользователю не меньше 18 лет),
@@ -31,6 +31,11 @@ import javax.inject.Inject
  * e.	Подъезд(максимум 20символов) и этаж(максимум 20символов).
  */
 
+/**
+ * ViewModel для экрана редактирования данных пользователя.
+ *
+ * @property userPreferencesUtils класс для работы с данными пользователя.
+ */
 @HiltViewModel
 class UserDataViewModel @Inject constructor(
     private val userPreferencesUtils: UserPreferencesUtils
@@ -65,169 +70,188 @@ class UserDataViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Обрабатывает действия пользователя и обновляет состояние.
+     *
+     * @param action действие, которое нужно обработать.
+     */
     fun dispatchAction(action: UserDataAction) {
-        when (action) {
-            // Пункт 11.	На экране "Данные аккаунта" можно добавить
-            //  b.	почту(если регистрация была по номеру) или номер(если регистрация была по почте),
-            //
-            is UserDataAction.UpdateUserTextPhone -> {
-                val errorText =
-                    if (action.phone.length == 10 || action.phone.isEmpty()) null else "Неполный номер"
-                _state.value = _state.value?.copy(
-                    userTextPhone = action.phone,
-                    userTextPhoneError = errorText
-                )
-                checkForChanges()
-            }
+            when (action) {
+                // Пункт 11.	На экране "Данные аккаунта" можно добавить
+                //  b.	почту(если регистрация была по номеру) или номер(если регистрация была по почте),
+                //
+                is UserDataAction.UpdateUserTextPhone -> {
+                    val currentState = _state.value?: return
+                    val errorText =
+                        if (TextValidationUtils.validatePhoneNumber(action.phone) || action.phone.isEmpty()) null else "Неполный номер"
+                    val updatedState = currentState.copy(
+                        userTextPhone = action.phone,
+                        userTextPhoneError = errorText
+                    )
+                    checkForChanges(updatedState)
+                }
 
-            // Пункт 11.	На экране "Данные аккаунта" можно добавить
-            //  b.	почту(если регистрация была по номеру) или номер(если регистрация была по почте),
-            //
-            is UserDataAction.UpdateUserTextEmail -> {
-                val errorText = isEmailCorrect(action.email)
-                _state.value = _state.value?.copy(
-                    userTextEmail = action.email,
-                    userTextEmailError = errorText
-                )
-                checkForChanges()
-            }
+                // Пункт 11.	На экране "Данные аккаунта" можно добавить
+                //  b.	почту(если регистрация была по номеру) или номер(если регистрация была по почте),
+                //
+                is UserDataAction.UpdateUserTextEmail -> {
+                    val currentState = _state.value?: return
+                    val errorText = isEmailCorrect(action.email)
+                    val updatedState = currentState.copy(
+                        userTextEmail = action.email,
+                        userTextEmailError = errorText
+                    )
+                    checkForChanges(updatedState)
+                }
 
-            //Пункт 11.	На экране "Данные аккаунта" можно добавить
-            //      a.	Имя пользователя (любое, даже пустое),
-            is UserDataAction.UpdateUserTextName -> {
-                _state.value = _state.value?.copy(userTextName = action.name)
-                checkForChanges()
-            }
+                //Пункт 11.	На экране "Данные аккаунта" можно добавить
+                //      a.	Имя пользователя (любое, даже пустое),
+                is UserDataAction.UpdateUserTextName -> {
+                    val currentState = _state.value?: return
+                    val updatedState = currentState.copy(userTextName = action.name)
+                    checkForChanges(updatedState)
+                }
 
-            //Пункт 11.	На экране "Данные аккаунта" можно добавить
-            //  c.	дату рождения, которую тоже нужно форматировать(проверка корректного набора: пользователю не меньше 18 лет),
-            is UserDataAction.UpdateUserTextBirthday -> {
-                val isAdult = if (action.birthday.isEmpty()) true else isAdult(action.birthday)
-                val errorText = if (!isAdult) "Пользователю еще нет 18 лет" else null
-                _state.value = _state.value?.copy(
-                    userTextBirthday = action.birthday,
-                    userTextBirthdayError = errorText
-                )
-
-                checkForChanges()
-            }
-
-
-            //d.	Адрес доставки
-            is UserDataAction.UpdateUserTextAddress -> {
-                _state.value = _state.value?.copy(userTextAddress = action.address)
-                checkForChanges()
-            }
-
-            //d.	квартира(максимум 20символов)
-            is UserDataAction.UpdateUserTextApartment -> {
-                _state.value = _state.value?.copy(userTextApartment = action.apartment)
-                checkForChanges()
-            }
-
-            //d.    подъезд(максимум 20символов)
-            is UserDataAction.UpdateUserTextEntrance -> {
-                _state.value = _state.value?.copy(userTextEntrance = action.entrance)
-                checkForChanges()
-            }
-
-            //d.    этаж(максимум 20символов)
-            is UserDataAction.UpdateUserTextFloor -> {
-                _state.value = _state.value?.copy(userTextFloor = action.floor)
-                checkForChanges()
-            }
-
-            //d.    домофон(максимум 20символов)
-            is UserDataAction.UpdateUserTextIntercom -> {
-                _state.value = _state.value?.copy(userTextIntercom = action.intercom)
-                checkForChanges()
-            }
-
-            UserDataAction.SwitchToChangeMode -> {
-                val currentState = _state.value ?: return
-                _state.value = currentState.copy(
-                    emailTextInputEnabled = currentState.userTextEmail.isEmpty(),
-                    phoneTextInputEnabled = currentState.userTextPhone.isEmpty(),
-                    isChangeMode = true
-                )
-            }
-
-            UserDataAction.LaunchDeleteDialog -> {
-                _state.value = _state.value?.copy(isDeleteDialogVisible = true)
-            }
-
-            UserDataAction.LaunchExitDialog -> {
-                _state.value = _state.value?.copy(isExitDialogVisible = true)
-            }
-
-            UserDataAction.CloseDialog -> {
-                _state.value = _state.value?.copy(
-                    isDeleteDialogVisible = false,
-                    isExitDialogVisible = false
-                )
-            }
-            //Пункт 14.	При удалении и выходе из аккаунта должна
-            // происходить очистка всех данных и переход на экран "Профиль".
-            UserDataAction.ConfirmDeleteDialog -> {
-                viewModelScope.launch {
-                    withContext(Dispatchers.IO) {
-                        deleteUser()
+                //Пункт 11.	На экране "Данные аккаунта" можно добавить
+                //  c.	дату рождения, которую тоже нужно форматировать(проверка корректного набора: пользователю не меньше 18 лет),
+                is UserDataAction.UpdateUserTextBirthday -> {
+                    val currentState = _state.value?: return
+                    val isAdult = if (action.birthday.isEmpty()) true else isAdult(action.birthday)
+                    val errorText = when {
+                        action.birthday.length <= 7 && action.birthday.isNotEmpty() -> "Неполный формат даты"
+                        !isAdult -> "Пользователю еще нет 18 лет"
+                        else -> null
                     }
-                    _state.value = _state.value?.copy(isDeleteDialogVisible = false)
-                    _closeScreenEffect.value = Event(Unit)
+                    val updatedState = currentState.copy(
+                        userTextBirthday = action.birthday,
+                        userTextBirthdayError = errorText
+                    )
+                    checkForChanges(updatedState)
                 }
-            }
 
-            //Пункт 14.	При удалении и выходе из аккаунта должна
-            // происходить очистка всех данных и переход на экран "Профиль".
-            UserDataAction.ConfirmExitDialog -> {
-                viewModelScope.launch {
-                    withContext(Dispatchers.IO) {
-                        deleteUser()
+
+                //d.	Адрес доставки
+                is UserDataAction.UpdateUserTextAddress -> {
+                    val currentState = _state.value?: return
+                    val updatedState = currentState.copy(userTextAddress = action.address)
+                    checkForChanges(updatedState)
+                }
+
+                //d.	квартира(максимум 20символов)
+                is UserDataAction.UpdateUserTextApartment -> {
+                    val currentState = _state.value?: return
+                    val updatedState = currentState.copy(userTextApartment = action.apartment)
+                    checkForChanges(updatedState)
+                }
+
+                //d.    подъезд(максимум 20символов)
+                is UserDataAction.UpdateUserTextEntrance -> {
+                    val currentState = _state.value ?: return
+                    val updatedState = currentState.copy(userTextEntrance = action.entrance)
+                    checkForChanges(updatedState)
+                }
+
+                //d.    этаж(максимум 20символов)
+                is UserDataAction.UpdateUserTextFloor -> {
+                    val currentState = _state.value ?: return
+                    val updatedState = currentState.copy(userTextFloor = action.floor)
+                    checkForChanges(updatedState)
+                }
+
+                //d.    домофон(максимум 20символов)
+                is UserDataAction.UpdateUserTextIntercom -> {
+                    val currentState = _state.value ?: return
+                    val updatedState = currentState.copy(userTextIntercom = action.intercom)
+                    checkForChanges(updatedState)
+                }
+
+                UserDataAction.SwitchToChangeMode -> {
+                    val currentState = _state.value ?: return
+                    _state.postValue(currentState.copy(
+                        emailTextInputEnabled = currentState.userTextEmail.isEmpty(),
+                        phoneTextInputEnabled = currentState.userTextPhone.isEmpty(),
+                        isChangeMode = true
+                    ))
+                }
+
+                UserDataAction.LaunchDeleteDialog -> {
+                    _state.postValue(_state.value?.copy(isDeleteDialogVisible = true))
+                }
+
+                UserDataAction.LaunchExitDialog -> {
+                    _state.postValue(_state.value?.copy(isExitDialogVisible = true))
+                }
+
+                UserDataAction.CloseDialog -> {
+                    _state.postValue(_state.value?.copy(
+                        isDeleteDialogVisible = false,
+                        isExitDialogVisible = false
+                    ))
+                }
+                //Пункт 14.	При удалении и выходе из аккаунта должна
+                // происходить очистка всех данных и переход на экран "Профиль".
+                UserDataAction.ConfirmDeleteDialog -> {
+                    viewModelScope.launch {
+                        withContext(Dispatchers.IO) {
+                            deleteUser()
+                        }
+                        _state.postValue(_state.value?.copy(isDeleteDialogVisible = false))
+                        _closeScreenEffect.postValue(Event(Unit))
                     }
-                    _state.value = _state.value?.copy(isExitDialogVisible = false)
-                    _closeScreenEffect.value = Event(Unit)
                 }
-            }
 
-            UserDataAction.SaveChanges -> {
-                viewModelScope.launch {
-                    saveChanges()
-                }
-            }
-
-            is UserDataAction.ChooseDate -> {
-                viewModelScope.launch {
-                    val resultDate = withContext(Dispatchers.IO) {
-                        parseLongToDate(action.date)
+                //Пункт 14.	При удалении и выходе из аккаунта должна
+                // происходить очистка всех данных и переход на экран "Профиль".
+                UserDataAction.ConfirmExitDialog -> {
+                    viewModelScope.launch {
+                        withContext(Dispatchers.IO) {
+                            deleteUser()
+                        }
+                        _state.postValue(_state.value?.copy(isExitDialogVisible = false))
+                        _closeScreenEffect.postValue(Event(Unit))
                     }
-                    dispatchAction(UserDataAction.UpdateUserTextBirthday(resultDate))
-                    _state.value = _state.value?.copy(isDatePickerVisible = false)
-                    checkForChanges()
+                }
 
+                UserDataAction.SaveChanges -> {
+                    viewModelScope.launch {
+                        saveChanges()
+                    }
+                }
+
+                is UserDataAction.ChooseDate -> {
+                    viewModelScope.launch {
+                        val currentState = _state.value?: return@launch
+                        val resultDate = withContext(Dispatchers.IO) {
+                            parseLongToDate(action.date)
+                        }
+                        dispatchAction(UserDataAction.UpdateUserTextBirthday(resultDate))
+                        val updatedState = currentState.copy(isDatePickerVisible = false)
+                        checkForChanges(updatedState)
+
+                    }
+                }
+
+                UserDataAction.CloseDataPicker -> {
+                    _state.postValue(_state.value?.copy(isDatePickerVisible = false))
+                }
+
+                UserDataAction.LaunchDataPicker -> {
+                    _state.postValue(_state.value?.copy(isDatePickerVisible = true))
                 }
             }
-
-            UserDataAction.CloseDataPicker -> {
-                _state.value = _state.value?.copy(isDatePickerVisible = false)
-            }
-
-            UserDataAction.LaunchDataPicker -> {
-                _state.value = _state.value?.copy(isDatePickerVisible = true)
-            }
-        }
     }
 
-
+    /**
+     * Удаляет данные пользователя.
+     */
     private suspend fun deleteUser() = userPreferencesUtils.deleteUserData()
 
 
     /**
-     * Если все условия выполнены, меняем флаг состояния.
+     * Проверяет наличие изменений в данных пользователя и обновляет состояние.
      */
-    private fun checkForChanges() {
+    private fun checkForChanges(currentState: UserDataState) {
 
-        val currentState = _state.value ?: return
         val originalData = runBlocking {
             userPreferencesUtils.userDataFlow.first()
         }
@@ -243,21 +267,17 @@ class UserDataViewModel @Inject constructor(
                 currentState.userTextFloor != originalData.floor ||
                 currentState.userTextIntercom != originalData.intercom
 
-        // проверяем, что поле с датой заполнено корректно
-        val dateNumber =
-            currentState.userTextBirthday.length == 8 || currentState.userTextBirthday.isEmpty()
 
-
-        // проверяет, что нет ошибок
+        // проверяет, что нет ошибок в валидации поля
         val hasErrors = currentState.userTextBirthdayError != null
                 || currentState.userTextPhoneError != null
                 || currentState.userTextEmailError != null
 
-        _state.value = currentState.copy(isSaveChanges = hasChanges && dateNumber && !hasErrors)
+        _state.value = currentState.copy(isSaveChanges = hasChanges && !hasErrors)
     }
 
     /**
-     * Сохранить данные в бд
+     * Сохраняет изменения в datastore.
      */
     private suspend fun saveChanges() {
 
@@ -266,7 +286,7 @@ class UserDataViewModel @Inject constructor(
             userPreferencesUtils.userDataFlow.first()
         }
 
-        // Сохраняем в бд
+        // Сохраняем в datastore
         withContext(Dispatchers.IO) {
             userPreferencesUtils.saveUserData(
                 name = state.userTextName,
@@ -290,7 +310,7 @@ class UserDataViewModel @Inject constructor(
 
         }
 
-        // отключаем режим редактирования и блокируем email и phone текстовые поля
+        // отключаем режим редактирования, а также блокируем текстовые поля email и phone
         _state.value = state.copy(
             isChangeMode = false,
             emailTextInputEnabled = false,
@@ -300,7 +320,10 @@ class UserDataViewModel @Inject constructor(
 
 
     /**
-     * Проверяет, является ли пользователь совершеннолетним
+     * Проверяет, является ли пользователь совершеннолетним.
+     *
+     * @param birthDateRaw строка с датой рождения в формате "ddMMyyyy".
+     * @return true, если пользователю 18 лет или больше, иначе false.
      */
     fun isAdult(birthDateRaw: String): Boolean {
         return try {
@@ -332,7 +355,10 @@ class UserDataViewModel @Inject constructor(
     }
 
     /**
-     * дата приходит в формате long, нужно преобразовать в строку
+     * Преобразует дату в миллисекундах в строку формата "ddMMyyyy".
+     *
+     * @param dateInMillis дата в миллисекундах.
+     * @return строка с датой или сообщение об ошибке.
      */
     private suspend fun parseLongToDate(dateInMillis: Long?): String {
         return if (dateInMillis != null) {
@@ -347,16 +373,13 @@ class UserDataViewModel @Inject constructor(
     }
 
     /**
-     * валидация email
+     * Проверяет корректность формата email.
+     *
+     * @param text строка с email.
+     * @return null, если email корректен или пуст, иначе сообщение об ошибке.
      */
     private fun isEmailCorrect(text: String): String? {
-        val correctEmail = if (text.contains('@')) {
-            val beforePart = text.substringBefore('@')
-            Patterns.EMAIL_ADDRESS.matcher(text).matches() && beforePart.last() != '.'
-        } else {
-            Patterns.EMAIL_ADDRESS.matcher(text).matches()
-
-        }
+        val correctEmail = TextValidationUtils.validateEmail(text)
         return if (correctEmail || text.isEmpty()) null else "Неверный формат email"
     }
 }

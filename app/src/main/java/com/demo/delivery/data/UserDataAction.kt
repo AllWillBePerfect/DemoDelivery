@@ -1,4 +1,4 @@
-package com.demo.delivery.ui.screens.userdata.models
+package com.demo.delivery.data
 
 sealed interface UserDataAction {
 

@@ -12,10 +12,18 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Класс для управления пользовательскими данными с использованием DataStore.
+ *
+ * @property context контекст приложения, используемый для доступа к DataStore.
+ */
 @Singleton
 class UserPreferencesUtils @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    /**
+     * Поток, предоставляющий данные пользователя из DataStore.
+     */
     val userDataFlow: Flow<UserData> = context.dataStore.data.map { preferences ->
         UserData(
             isLoggedIn = preferences[IS_LOGGED_IN] == true,
@@ -31,7 +39,17 @@ class UserPreferencesUtils @Inject constructor(
             intercom = preferences[INTERCOM] ?: "",
         )
     }
-
+    /**
+     * Сохраняет данные пользователя в DataStore.
+     *
+     * @param name имя пользователя.
+     * @param birthday дата рождения пользователя.
+     * @param address адрес пользователя.
+     * @param apartment номер квартиры пользователя.
+     * @param entrance номер подъезда пользователя.
+     * @param floor этаж пользователя.
+     * @param intercom код домофона пользователя.
+     */
     suspend fun saveUserData(
         name: String,
         birthday: String,
@@ -40,7 +58,6 @@ class UserPreferencesUtils @Inject constructor(
         entrance: String,
         floor: String,
         intercom: String,
-
         ) {
         context.dataStore.edit { preferences ->
             preferences[NAME] = name
@@ -52,7 +69,9 @@ class UserPreferencesUtils @Inject constructor(
             preferences[INTERCOM] = intercom
         }
     }
-
+    /**
+     * Удаляет данные пользователя из DataStore.
+     */
     suspend fun deleteUserData() {
         context.dataStore.edit { preferences ->
             preferences[IS_LOGGED_IN] = false
@@ -69,6 +88,11 @@ class UserPreferencesUtils @Inject constructor(
         }
     }
 
+    /**
+     * Авторизует пользователя по email и сохраняет соответствующие данные в DataStore.
+     *
+     * @param email адрес электронной почты пользователя.
+     */
     suspend fun authorizeByEmail(email: String) {
         context.dataStore.edit { preferences ->
             preferences[IS_LOGGED_IN] = true
@@ -77,6 +101,11 @@ class UserPreferencesUtils @Inject constructor(
         }
     }
 
+    /**
+     * Авторизует пользователя по номеру телефона и сохраняет соответствующие данные в DataStore.
+     *
+     * @param phone номер телефона пользователя.
+     */
     suspend fun authorizeByPhone(phone: String) {
         context.dataStore.edit { preferences ->
             preferences[IS_LOGGED_IN] = true
@@ -84,9 +113,6 @@ class UserPreferencesUtils @Inject constructor(
             preferences[PHONE] = phone
         }
     }
-
-    fun userIsLoggedIn() = userDataFlow.map { it.isLoggedIn }
-
 
     companion object {
         private const val USER_PREFERENCES_NAME = "user_preferences"

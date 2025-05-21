@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.demo.delivery.R
-import com.demo.delivery.ui.screens.codeconfirm.models.CodeConfirmAction
+import com.demo.delivery.data.CodeConfirmAction
 import com.demo.delivery.ui.theme.DeliveryTheme
 import com.demo.delivery.ui.theme.PREVIEW_DEVICE
 import com.demo.delivery.ui.theme.PREVIEW_UI_MODE_DARK

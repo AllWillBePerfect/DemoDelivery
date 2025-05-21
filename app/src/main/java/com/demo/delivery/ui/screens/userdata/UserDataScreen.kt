@@ -44,11 +44,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.demo.delivery.R
 import com.demo.delivery.components.userdata.UserDataAlertDialog
 import com.demo.delivery.components.userdata.UserDataInputFieldShort
+import com.demo.delivery.data.UserDataAction
+import com.demo.delivery.data.UserDataState
 import com.demo.delivery.ui.navigation.AppScreens
 import com.demo.delivery.ui.navigation.CodeConfirmMethod
 import com.demo.delivery.ui.navigation.localNavHost
-import com.demo.delivery.ui.screens.userdata.models.UserDataAction
-import com.demo.delivery.ui.screens.userdata.models.UserDataState
 import com.demo.delivery.utils.DateVisualTransformation
 import com.demo.delivery.utils.NanpVisualTransformation
 import com.demo.delivery.viewmodels.UserDataViewModel
@@ -122,13 +122,23 @@ fun UserDataScreen(
                         imeAction = ImeAction.Done
                     ),
                     label = { Text(text = stringResource(R.string.user_data_label_phone)) },
-                    onValueChange = {text ->
+                    onValueChange = { text ->
                         if (text.length <= 10) {
                             viewModel.dispatchAction(UserDataAction.UpdateUserTextPhone(text))
 
                         }
                     }
                 )
+
+                state.userTextPhoneError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
+
 
                 Spacer(Modifier.height(16.dp))
 
@@ -146,6 +156,14 @@ fun UserDataScreen(
                         viewModel.dispatchAction(UserDataAction.UpdateUserTextEmail(text))
                     }
                 )
+                state.userTextEmailError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
 
                 Spacer(Modifier.height(16.dp))
 
@@ -154,7 +172,7 @@ fun UserDataScreen(
                     value = state.userTextName,
                     enabled = isChangeMode,
                     label = { Text(text = stringResource(R.string.user_data_label_name)) },
-                    onValueChange = {viewModel.dispatchAction(UserDataAction.UpdateUserTextName(it))}
+                    onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextName(it)) }
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -188,6 +206,14 @@ fun UserDataScreen(
                             viewModel.dispatchAction(UserDataAction.UpdateUserTextBirthday(text))
                     }
                 )
+                state.userTextBirthdayError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
 
                 Spacer(Modifier.height(16.dp))
 
@@ -206,7 +232,13 @@ fun UserDataScreen(
                     value = state.userTextAddress,
                     enabled = isChangeMode,
                     label = { Text(text = stringResource(R.string.user_data_label_address)) },
-                    onValueChange = {viewModel.dispatchAction(UserDataAction.UpdateUserTextAddress(it))}
+                    onValueChange = {
+                        viewModel.dispatchAction(
+                            UserDataAction.UpdateUserTextAddress(
+                                it
+                            )
+                        )
+                    }
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -220,7 +252,13 @@ fun UserDataScreen(
                         value = state.userTextApartment,
                         modifier = Modifier.weight(1f),
                         isEnabled = isChangeMode,
-                        onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextApartment(it)) }
+                        onValueChange = {
+                            viewModel.dispatchAction(
+                                UserDataAction.UpdateUserTextApartment(
+                                    it
+                                )
+                            )
+                        }
 
                     )
 
@@ -229,7 +267,13 @@ fun UserDataScreen(
                         value = state.userTextEntrance,
                         modifier = Modifier.weight(1f),
                         isEnabled = isChangeMode,
-                        onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextEntrance(it)) }
+                        onValueChange = {
+                            viewModel.dispatchAction(
+                                UserDataAction.UpdateUserTextEntrance(
+                                    it
+                                )
+                            )
+                        }
 
                     )
 
@@ -238,7 +282,13 @@ fun UserDataScreen(
                         value = state.userTextFloor,
                         modifier = Modifier.weight(1f),
                         isEnabled = isChangeMode,
-                        onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextFloor(it)) }
+                        onValueChange = {
+                            viewModel.dispatchAction(
+                                UserDataAction.UpdateUserTextFloor(
+                                    it
+                                )
+                            )
+                        }
 
                     )
 
@@ -247,7 +297,13 @@ fun UserDataScreen(
                         value = state.userTextIntercom,
                         modifier = Modifier.weight(1f),
                         isEnabled = isChangeMode,
-                        onValueChange = { viewModel.dispatchAction(UserDataAction.UpdateUserTextIntercom(it)) }
+                        onValueChange = {
+                            viewModel.dispatchAction(
+                                UserDataAction.UpdateUserTextIntercom(
+                                    it
+                                )
+                            )
+                        }
 
                     )
 
@@ -279,7 +335,7 @@ fun UserDataScreen(
                     ) {
                         TextButton(
                             modifier = Modifier.weight(1f),
-                            onClick = {viewModel.dispatchAction(UserDataAction.LaunchDeleteDialog)}
+                            onClick = { viewModel.dispatchAction(UserDataAction.LaunchDeleteDialog) }
                         ) {
                             Text(
                                 text = stringResource(R.string.user_data_button_delete),
@@ -293,7 +349,7 @@ fun UserDataScreen(
                         TextButton(
                             modifier = Modifier.weight(1f),
 
-                            onClick = {viewModel.dispatchAction(UserDataAction.LaunchExitDialog)}
+                            onClick = { viewModel.dispatchAction(UserDataAction.LaunchExitDialog) }
                         ) {
                             Text(
                                 text = stringResource(R.string.user_data_button_exit),
@@ -326,7 +382,7 @@ fun UserDataScreen(
 
 
             DatePickerDialog(
-                onDismissRequest = {viewModel.dispatchAction(UserDataAction.CloseDataPicker)},
+                onDismissRequest = { viewModel.dispatchAction(UserDataAction.CloseDataPicker) },
                 confirmButton = {
                     TextButton(onClick = {
                         datePickerState.selectedDateMillis?.let {
@@ -338,7 +394,7 @@ fun UserDataScreen(
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = {viewModel.dispatchAction(UserDataAction.CloseDataPicker)}) {
+                    TextButton(onClick = { viewModel.dispatchAction(UserDataAction.CloseDataPicker) }) {
                         Text("Cancel")
                     }
                 }
@@ -358,9 +414,18 @@ fun UserDataScreen(
 
     LaunchedEffect(navigateToCodeConfirmEffect) {
         navigateToCodeConfirmEffect?.singleValue()?.let {
-          when (it) {
-                is CodeConfirmMethod.Email -> navController.navigate(AppScreens.CodeConfirmEmail.createRoute(it.email))
-                is CodeConfirmMethod.Phone -> navController.navigate(AppScreens.CodeConfirmPhone.createRoute(it.phoneNumber))
+            when (it) {
+                is CodeConfirmMethod.Email -> navController.navigate(
+                    AppScreens.CodeConfirmEmail.createRoute(
+                        it.email
+                    )
+                )
+
+                is CodeConfirmMethod.Phone -> navController.navigate(
+                    AppScreens.CodeConfirmPhone.createRoute(
+                        it.phoneNumber
+                    )
+                )
             }
         }
     }

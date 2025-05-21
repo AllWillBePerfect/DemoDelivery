@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.demo.delivery.R
-import com.demo.delivery.ui.screens.codeconfirm.models.CodeConfirmAction
+import com.demo.delivery.data.CodeConfirmAction
 import com.demo.delivery.ui.theme.DeliveryTheme
 import com.demo.delivery.ui.theme.PREVIEW_DEVICE
 import com.demo.delivery.ui.theme.PREVIEW_UI_MODE_DARK

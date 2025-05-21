@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -18,14 +19,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.demo.delivery.R
 import com.demo.delivery.components.profile.ProfileAuthItem
 import com.demo.delivery.components.profile.ProfileUnableItem
-import com.demo.delivery.ui.screens.profile.models.ProfileState
+import com.demo.delivery.data.ProfileState
 import com.demo.delivery.viewmodels.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.observeAsState(ProfileState())
+    val state by viewModel.state.collectAsState()
 
     Scaffold { innerPadding ->
         Box(
@@ -39,7 +40,7 @@ fun ProfileScreen(
             ) {
 
                 ProfileAuthItem(
-                    isAuthorized = state.isAuthorized,
+                    isAuthorized = state.isLoggedIn,
                     userName = state.userName
                 )
 

@@ -38,8 +38,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.demo.delivery.R
 import com.demo.delivery.ui.navigation.AppScreens
 import com.demo.delivery.ui.navigation.localNavHost
-import com.demo.delivery.ui.screens.login.models.LoginAction
-import com.demo.delivery.ui.screens.login.models.LoginState
+import com.demo.delivery.data.LoginAction
+import com.demo.delivery.data.LoginState
 import com.demo.delivery.utils.NanpVisualTransformation
 import com.demo.delivery.viewmodels.LoginViewModel
 

@@ -1,5 +1,11 @@
 package com.demo.delivery.utils
 
+/**
+ * Класс-обертка для данных, которые должны быть обработаны только один раз.
+ *
+ * @param T тип содержимого, которое оборачивается.
+ * @property content содержимое, которое оборачивается.
+ */
 open class Event<out T>(private val content: T) {
 
     private var hasBeenHandled = false
@@ -15,9 +21,4 @@ open class Event<out T>(private val content: T) {
             content
         }
     }
-
-    /**
-     * Возвращает содержимое, даже если оно уже было обработано.
-     */
-    fun requireValue(): T = content
 }

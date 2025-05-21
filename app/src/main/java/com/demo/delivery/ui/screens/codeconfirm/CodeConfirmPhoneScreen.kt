@@ -26,13 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.demo.delivery.R
+import com.demo.delivery.components.codeconfirm.CodeConfirmBottomSection
 import com.demo.delivery.components.codeconfirm.CodeConfirmButtonSection
 import com.demo.delivery.components.codeconfirm.CodeConfirmHeader
 import com.demo.delivery.components.codeconfirm.CodeConfirmTimerSection
 import com.demo.delivery.components.codeconfirm.CodeConfirmOtpSection
 import com.demo.delivery.ui.navigation.AppScreens
 import com.demo.delivery.ui.navigation.localNavHost
-import com.demo.delivery.ui.screens.codeconfirm.models.CodeConfirmState
+import com.demo.delivery.data.CodeConfirmState
 import com.demo.delivery.viewmodels.CodeConfirmViewModel
 
 @Composable
@@ -46,17 +47,6 @@ fun CodeConfirmPhoneScreen(
     val navController = localNavHost.current
 
     val byEmailEnter by remember { mutableStateOf(false) }
-
-    val notSentText = if (byEmailEnter)
-        stringResource(R.string.code_confirm_email_not_sent)
-    else
-        stringResource(R.string.code_confirm_sms_not_sent)
-
-    val writeCorrectText = if (byEmailEnter)
-        stringResource(R.string.code_confirm_email_write_correct)
-    else
-        stringResource(R.string.code_confirm_sms_write_correct)
-
 
     Scaffold { innerPadding ->
         Box(
@@ -110,27 +100,9 @@ fun CodeConfirmPhoneScreen(
 
                 Spacer(Modifier.height(24.dp))
 
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        modifier = Modifier.alpha(0.3f),
-                        text = notSentText,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.W500,
-                        lineHeight = 20.sp
-                    )
-
-                    Text(
-                        modifier = Modifier.alpha(0.3f),
-                        text = writeCorrectText,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp
-                    )
-                }
+                CodeConfirmBottomSection(
+                    byEmailEnter = byEmailEnter
+                )
             }
         }
     }

@@ -1,18 +1,24 @@
 package com.demo.delivery.viewmodels
 
-import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.demo.delivery.ui.screens.login.models.LoginAction
-import com.demo.delivery.ui.screens.login.models.LoginState
+import com.demo.delivery.data.LoginAction
+import com.demo.delivery.data.LoginState
+import com.demo.delivery.utils.TextValidationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+/**
+ * ViewModel для экрана ввода номера телефона или email для авторизации.
+ */
 @HiltViewModel
 class LoginViewModel @Inject constructor(
 ) : ViewModel() {
 
+    /**
+     * Текущее состояние экрана LoginScreen
+     */
     private val _state = MutableLiveData<LoginState>(LoginState())
     val state: LiveData<LoginState> = _state
 
@@ -20,12 +26,8 @@ class LoginViewModel @Inject constructor(
         when (action) {
             is LoginAction.SwitchAuthMethod -> switchAuthMethod()
             is LoginAction.UpdateUserTextEmail -> setUserTextEmail(action.text)
-            is LoginAction.UpdateUserTextPhone -> {
-                setUserTextPhone(action.text)
-            }
+            is LoginAction.UpdateUserTextPhone -> setUserTextPhone(action.text)
 
-            LoginAction.OnEmailButtonClick -> {}
-            LoginAction.OnPhoneButtonClick -> {}
         }
     }
 
@@ -34,18 +36,18 @@ class LoginViewModel @Inject constructor(
      */
     private fun switchAuthMethod() {
         _state.value?.let {
-            _state.value = it.copy(byEmailEnter = !it.byEmailEnter)
+            _state.postValue(it.copy(byEmailEnter = !it.byEmailEnter))
         }
     }
 
     /**
      * Функция проверяет корректность введенного номера телефона
      */
-    private fun setUserTextPhone(text: String) {
-        val isPhoneValid = text.length == 10
+    private fun setUserTextPhone(phone: String) {
+        val isPhoneValid = TextValidationUtils.validatePhoneNumber(phone)
         _state.value = _state.value?.copy(
             phoneButtonEnabled = isPhoneValid,
-            userTextPhone = text
+            userTextPhone = phone
         )
     }
 
@@ -54,16 +56,9 @@ class LoginViewModel @Inject constructor(
      * НЕкорректными - test.@test.test и test.test.@test.test;
      * Функция проверяет корректность введенного email
      */
-    private fun setUserTextEmail(text: String) {
-        val correctEmail = if (text.contains('@')) {
-            val beforePart = text.substringBefore('@')
-            // проверка на отсутствия точки перед @
-            Patterns.EMAIL_ADDRESS.matcher(text).matches() && beforePart.last() != '.'
-        } else {
-            Patterns.EMAIL_ADDRESS.matcher(text).matches()
-
-        }
-        _state.value = _state.value?.copy(emailButtonEnabled = correctEmail, userTextEmail = text)
+    private fun setUserTextEmail(email: String) {
+        val correctEmail = TextValidationUtils.validateEmail(email)
+        _state.value = _state.value?.copy(emailButtonEnabled = correctEmail, userTextEmail = email)
     }
 }
 

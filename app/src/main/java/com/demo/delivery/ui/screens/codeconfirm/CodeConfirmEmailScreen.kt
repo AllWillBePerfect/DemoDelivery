@@ -24,7 +24,7 @@ import com.demo.delivery.components.codeconfirm.CodeConfirmTimerSection
 import com.demo.delivery.components.codeconfirm.CodeConfirmOtpSection
 import com.demo.delivery.ui.navigation.AppScreens
 import com.demo.delivery.ui.navigation.localNavHost
-import com.demo.delivery.ui.screens.codeconfirm.models.CodeConfirmState
+import com.demo.delivery.data.CodeConfirmState
 import com.demo.delivery.viewmodels.CodeConfirmViewModel
 
 @Composable
